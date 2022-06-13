@@ -12,6 +12,8 @@ export function Post(props) {
   const [comments, setComments] = useState(["Post muito bacana, hein?!"]);
   const [newCommentText, setNewCommentText] = useState("");
 
+  const isNewCommentEmpty = newCommentText.length === 0;
+
   const publishedDateFormatted = format(
     publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
@@ -31,7 +33,20 @@ export function Post(props) {
   }
 
   function handleNewCommentChange(event) {
+    event.target.setCustomValidity("");
     setNewCommentText(event.target.value);
+  }
+
+  function deleteComment(commentToDelete) {
+    const newCommentListWithoutDeletedOnes = comments.filter(
+      (c) => c !== commentToDelete
+    );
+
+    setComments(newCommentListWithoutDeletedOnes);
+  }
+
+  function handleNewCommentInvalid() {
+    event.target.setCustomValidity("Este campo é obrigatório!");
   }
 
   return (
@@ -75,16 +90,26 @@ export function Post(props) {
           name="comment"
           value={newCommentText}
           onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
 
         <footer>
-          <button type="submit">Publicar</button>
+          <button type="submit" disabled={isNewCommentEmpty}>
+            Publicar
+          </button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
         {comments.map((comment) => {
-          return <Comment key={comment} content={comment} />;
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
+          );
         })}
       </div>
     </article>
