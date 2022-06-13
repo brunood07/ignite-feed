@@ -9,7 +9,8 @@ import styles from "./Post.module.css";
 export function Post(props) {
   const { author, content, publishedAt } = props;
 
-  const [comments, setComments] = useState([1, 2, 3]);
+  const [comments, setComments] = useState(["Post muito bacana, hein?!"]);
+  const [newCommentText, setNewCommentText] = useState("");
 
   const publishedDateFormatted = format(
     publishedAt,
@@ -22,10 +23,15 @@ export function Post(props) {
     addSuffix: true,
   });
 
-  function handleCreateNewComment(values) {
+  function handleCreateNewComment() {
     event.preventDefault();
 
-    setComments((prev) => [...prev, 4]);
+    setComments([...comments, newCommentText]);
+    setNewCommentText("");
+  }
+
+  function handleNewCommentChange(event) {
+    setNewCommentText(event.target.value);
   }
 
   return (
@@ -50,10 +56,10 @@ export function Post(props) {
       <div className={styles.content}>
         {content.map((line) => {
           if (line.type === "paragraph") {
-            return <p>{line.content}</p>;
+            return <p key={line.content}>{line.content}</p>;
           } else if (line.type === "link") {
             return (
-              <p>
+              <p key={line.content}>
                 <a href={line.content}>{line.content}</a>
               </p>
             );
@@ -64,7 +70,12 @@ export function Post(props) {
       <form className={styles.commentForm} onSubmit={handleCreateNewComment}>
         <strong>Deixe seu feedback</strong>
 
-        <textarea placeholder="Deixe um comentário" />
+        <textarea
+          placeholder="Deixe um comentário"
+          name="comment"
+          value={newCommentText}
+          onChange={handleNewCommentChange}
+        />
 
         <footer>
           <button type="submit">Publicar</button>
@@ -73,7 +84,7 @@ export function Post(props) {
 
       <div className={styles.commentList}>
         {comments.map((comment) => {
-          return <Comment />;
+          return <Comment key={comment} content={comment} />;
         })}
       </div>
     </article>
