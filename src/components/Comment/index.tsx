@@ -5,7 +5,12 @@ import { Avatar } from "../Avatar";
 
 import styles from "./Comment.module.css";
 
-export function Comment(props) {
+interface IComment {
+  content: string;
+  onDeleteComment: (content: string) => void;
+}
+
+export function Comment(props: IComment) {
   const { content, onDeleteComment } = props;
 
   const [likeCount, setLikeCount] = useState(0);
